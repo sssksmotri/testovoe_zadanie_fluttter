@@ -64,6 +64,7 @@ flutter:
   - assets/icons/chat.png
   - assets/icons/like.png
   - assets/icons/setting.png
+  - assets/icons/Switch.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
