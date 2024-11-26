@@ -4,6 +4,7 @@ import 'package:testovoe_zadanie/screens/like_pages.dart';
 import 'package:testovoe_zadanie/screens/profile_pages.dart';
 import 'package:testovoe_zadanie/screens/setting_pages.dart';
 
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -17,6 +18,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   int currentindex = 0;
+  bool isChatsFull = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
           alignment: Alignment.center,
           child: getSelectedWidget(index: currentindex),
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar:   Container(
           decoration: const BoxDecoration(
             color: Color(0xFF191818),
           ),
@@ -47,6 +49,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+
 
 
   Widget _buildNavItem(int index, String assetPath) {

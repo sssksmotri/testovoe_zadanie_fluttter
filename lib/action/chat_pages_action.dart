@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widget/bottomSheetWidget.dart';
 
@@ -142,5 +143,19 @@ class ActionMain {
       },
     );
   }
+
+  void navigateToFullScreen(BuildContext context, Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => page,
+      ),
+    ).then((_) async {
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.remove('isOnChatsFull');
+    });
+  }
+
 }
 
