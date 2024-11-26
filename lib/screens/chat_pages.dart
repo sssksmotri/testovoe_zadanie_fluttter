@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:testovoe_zadanie/action/chat_pages_action.dart';
+import 'package:testovoe_zadanie/screens/chats_full.dart';
+import '../widget/bottomSheetWidget.dart';
 import 'ChatItem.dart';
 
 
@@ -56,104 +59,18 @@ class _ChatPagesState extends State<ChatPages> {
       'hasDot':false
     },
   ];
-
-  void showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.grey[900],
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return Container(
-          height: 200,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Настройки",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pop(context); // Закрываем BottomSheet
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    isSwitched ? "ON" : "OFF",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isSwitched ? Colors.white : Colors.grey,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isSwitched = !isSwitched;
-                      });
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: isSwitched ? Colors.white : Colors.grey,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: AnimatedAlign(
-                        duration: const Duration(milliseconds: 200),
-                        alignment: isSwitched
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isSwitched ? Icons.mic : Icons.mic_off,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  final ActionMain actionMain = new ActionMain();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
     home: Scaffold(
+      backgroundColor:const Color(0xFFD9D9D9) ,
       body: SafeArea(
           child:Column(
             children: [
               Container(
-                color: Colors.white,
+                color: const Color(0xFFD9D9D9),
                 height: MediaQuery.of(context).size.height * 0.2,
                 width: double.infinity,
               ),
@@ -235,8 +152,7 @@ class _ChatPagesState extends State<ChatPages> {
                               Positioned.fill(
                                 child: GestureDetector(
                                   onTap: () {
-                                    ButtonVisible=false;
-                                    showBottomSheet(context);
+                                    actionMain.showBottomSheet(context);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -260,19 +176,32 @@ class _ChatPagesState extends State<ChatPages> {
                     ),
                         ],
                       ),
-                  Expanded(child: ListView.builder(
-                    itemCount: chatData.length,
-                    itemBuilder: (context, index) {
-                      final chat = chatData[index];
-                      return ChatItem(
-                        datetime: chat['datetime']!,
-                        lastMessage: chat['lastMessage']!,
-                        imageUrl: chat['imageUrl']!,
-                        hasDot: chat['hasDot'],
-                      );
-                    },
-                  ),
-                )
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: chatData.length,
+                          itemBuilder: (context, index) {
+                            final chat = chatData[index];
+                            return GestureDetector(
+                              onTap: () async {
+                                final prefs = await SharedPreferences.getInstance();
+
+                                await prefs.setBool('isOnChatsFull', true);
+
+                                actionMain.navigateToFullScreen(
+                                  context,
+                                  ChatsFull(imageUrl: chat['imageUrl']!),
+                                );
+                              },
+                              child: ChatItem(
+                                datetime: chat['datetime']!,
+                                lastMessage: chat['lastMessage']!,
+                                imageUrl: chat['imageUrl']!,
+                                hasDot: chat['hasDot'],
+                              ),
+                            );
+                          },
+                        ),
+                      )
                     ],
                   )
                 ),
@@ -286,3 +215,5 @@ class _ChatPagesState extends State<ChatPages> {
     );
   }
 }
+
+
